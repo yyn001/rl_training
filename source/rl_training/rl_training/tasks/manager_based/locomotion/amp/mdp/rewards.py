@@ -171,30 +171,39 @@ def dof_torque_limits(env: ManagerBasedEnv, asset_cfg: SceneEntityCfg, soft_rati
 # Regularization rewards
 # ---------------------------------------------------------------------------
 def dof_vel_l2(env: ManagerBasedEnv, asset_cfg: SceneEntityCfg) -> torch.Tensor:
-    """Penalize high DOF velocity."""
+    """Penalize high DOF velocity (normalized by max velocity)."""
     robot = env.scene[asset_cfg.name]
-    return torch.sum(torch.square(robot.data.joint_vel[:, asset_cfg.joint_ids]), dim=1)
+    indices = asset_cfg.joint_ids
+    vel = robot.data.joint_vel[:, indices]
+    max_vel = robot.data.soft_joint_vel_limits[:, indices]
+    return torch.sum(torch.square(vel / (max_vel + 1e-6)), dim=1)
 
 
 def dof_torque_l2(env: ManagerBasedEnv, asset_cfg: SceneEntityCfg, torque_coeffs: dict | None = None) -> torch.Tensor:
-    """Penalize DOF torque with per-joint coefficients."""
+    """Penalize DOF torque (normalized by max torque) with per-joint coefficients."""
     robot = env.scene[asset_cfg.name]
     indices = asset_cfg.joint_ids
     torques = robot.data.applied_torque[:, indices]
+    max_torque = robot.data.joint_effort_limits[:, indices]
+    normalized = torch.square(torques / (max_torque + 1e-6))
 
     ahm = _ahm(env)
     coeffs = getattr(ahm, "torque_coeffs_vec", None)
     if coeffs is not None:
-        return torch.sum(torch.square(torques) * coeffs, dim=1)
-    return torch.sum(torch.square(torques), dim=1)
+        return torch.sum(normalized * coeffs, dim=1)
+    return torch.sum(normalized, dim=1)
 
 
 def power(env: ManagerBasedEnv, asset_cfg: SceneEntityCfg) -> torch.Tensor:
-    """Cost of transportation (torque * velocity)."""
+    """Cost of transportation (normalized: torque*vel / (max_torque*max_vel))."""
     robot = env.scene[asset_cfg.name]
     indices = asset_cfg.joint_ids
+    torque = robot.data.applied_torque[:, indices]
+    vel = robot.data.joint_vel[:, indices]
+    max_torque = robot.data.joint_effort_limits[:, indices]
+    max_vel = robot.data.soft_joint_vel_limits[:, indices]
     return torch.sum(
-        torch.abs(robot.data.applied_torque[:, indices] * robot.data.joint_vel[:, indices]),
+        torch.abs(torque * vel) / (max_torque * max_vel + 1e-6),
         dim=1,
     )
 

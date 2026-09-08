@@ -417,19 +417,19 @@ class AmpRewardsCfg:
     # ── Regularization rewards ───────────────────────────────────
     dof_vel_l2 = RewTerm(
         func=mdp.dof_vel_l2,
-        weight=-1e-4,
+        weight=-0.065,
         params={"asset_cfg": SceneEntityCfg("robot")},
     )
     dof_torque_l2 = RewTerm(
         func=mdp.dof_torque_l2,
-        weight=-4e-6,
+        weight=-0.18,
         params={
             "asset_cfg": SceneEntityCfg("robot"),
         },
     )
     power = RewTerm(
         func=mdp.power,
-        weight=-1e-5,
+        weight=-0.025,
         params={"asset_cfg": SceneEntityCfg("robot")},
     )
     action_l2 = RewTerm(
