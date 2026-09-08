@@ -72,14 +72,17 @@ def ang_vel_xy_gaussian(env: ManagerBasedEnv, decay: float = 0.02) -> torch.Tens
 # ---------------------------------------------------------------------------
 # Gait rewards
 # ---------------------------------------------------------------------------
-def feet_air_time(env: ManagerBasedEnv, contact_sensor_cfg: SceneEntityCfg) -> torch.Tensor:
-    """Reward long steps with dynamic target. Returns positive value (use negative weight)."""
+def feet_air_time(env: ManagerBasedEnv, contact_sensor_cfg: SceneEntityCfg, target_max: float = 0.36, target_min: float = 0.28) -> torch.Tensor:
+    """Reward steps near dynamic target air time. Returns positive value (use negative weight).
+
+    target decreases from target_max (at zero cmd) to target_min (at max cmd).
+    Uses abs() so both too-slow and too-fast steps are penalized.
+    """
     ahm = _ahm(env)
     cmd_term = env.command_manager.get_term("base_velocity")
     first_contact = (ahm.feet_air_time > 0.0) * ahm.contact
     ahm.feet_air_time += env.step_dt
 
-    # Dynamic target: 0.36s at zero cmd, 0.22s at max cmd
     cmd_speed = torch.norm(cmd_term.command[:, :2], dim=1)
     yaw_speed = torch.abs(cmd_term.command[:, 2])
     v_th = 0.15  # zero_cmd_threshold_xy
@@ -87,8 +90,9 @@ def feet_air_time(env: ManagerBasedEnv, contact_sensor_cfg: SceneEntityCfg) -> t
     speed_norm = torch.clamp((cmd_speed - v_th) / (1.4 - v_th), 0.0, 1.0)
     yaw_norm = torch.clamp((yaw_speed - w_th) / (1.2 - w_th), 0.0, 1.0)
     cmd_level = torch.max(speed_norm, yaw_norm)
-    target = (0.36 - cmd_level * (0.36 - 0.22)).unsqueeze(1)
-    reward = torch.sum(torch.clip(target - ahm.feet_air_time, min=0.0) / target * first_contact, dim=1)
+    target = (target_max - cmd_level * (target_max - target_min)).unsqueeze(1)
+    diff = torch.clamp(target - ahm.feet_air_time, min=0)
+    reward = torch.sum(diff / target * first_contact, dim=1)
     ahm.feet_air_time *= ~ahm.contact
     return reward
 

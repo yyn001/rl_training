@@ -375,14 +375,16 @@ class AmpRewardsCfg:
     # ── Gait rewards ─────────────────────────────────────────────
     feet_air_time = RewTerm(
         func=mdp.feet_air_time,
-        weight=-0.75,
+        weight=-0.5,
         params={
             "contact_sensor_cfg": SceneEntityCfg("contact_sensor", body_names=["*ankle.*"]),
+            "target_max": 0.24,
+            "target_min": 0.24,
         },
     )
     feet_contact = RewTerm(
         func=mdp.feet_contact,
-        weight=0.5,
+        weight=0.75,
         params={
             "contact_sensor_cfg": SceneEntityCfg("contact_sensor", body_names=["*ankle.*"]),
             "command_name": "base_velocity",
@@ -432,12 +434,12 @@ class AmpRewardsCfg:
     )
     action_l2 = RewTerm(
         func=mdp.action_l2,
-        weight=-0.05,
+        weight=-1e-10,
         params={
             "asset_cfg": SceneEntityCfg("robot"),
         },
     )
-    action_rate_l2 = RewTerm(func=mdp.action_rate_l2, weight=-0.02)
+    action_rate_l2 = RewTerm(func=mdp.action_rate_l2, weight=-0.025)
     smoothness_l2 = RewTerm(func=mdp.smoothness_l2, weight=-0.008)
 
     # ── Constraint rewards ───────────────────────────────────────
@@ -471,7 +473,7 @@ class AmpRewardsCfg:
     )
     feet_distance = RewTerm(
         func=mdp.feet_distance,
-        weight=0.06,
+        weight=0.08,
         params={
             "asset_cfg": SceneEntityCfg("robot", body_names=["*ankle.*"]),
             "target_distance": 0.26,
@@ -488,7 +490,7 @@ class AmpRewardsCfg:
     )
     feet_impact_vel = RewTerm(
         func=mdp.feet_impact_vel,
-        weight=-2.5,
+        weight=-2.0,
         params={
             "contact_sensor_cfg": SceneEntityCfg("contact_sensor", body_names=[".*ankle.*"]),
         },
@@ -510,7 +512,7 @@ class AmpRewardsCfg:
     )
 
     # AMP reward
-    amp_reward = RewTerm(func=mdp.amp_reward, weight=1.0)
+    amp_reward = RewTerm(func=mdp.amp_reward, weight=2.0)
 
 
 @configclass
