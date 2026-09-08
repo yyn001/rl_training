@@ -1,5 +1,5 @@
 {
- "MotionWeight": 0.5,
+ "MotionWeight": 3.0,
  "fps": 60,
  "Frames": [
   [

@@ -200,7 +200,7 @@ DR02_CFG = ArticulationCfg(
             enable_gyroscopic_forces=True,
         ),
         articulation_props=sim_utils.ArticulationRootPropertiesCfg(
-            enabled_self_collisions=False,
+            enabled_self_collisions=True,
             solver_position_iteration_count=8,
             solver_velocity_iteration_count=2,
             fix_root_link=False,
@@ -259,7 +259,11 @@ DR02_CFG = ArticulationCfg(
                 ".*_hip_z_joint|.*_ankle_y_joint|waist_z_joint|.*_shoulder_y_joint|.*_shoulder_x_joint|.*_shoulder_z_joint|.*_elbow_joint": 17.38,
                 ".*_ankle_x_joint": 20.76,
             },
-            velocity_limit_sim=1e7,
+            velocity_limit_sim={
+                ".*_hip_y_joint|.*_hip_x_joint|.*_knee_joint": 18.0,
+                ".*_hip_z_joint|.*_ankle_y_joint|waist_z_joint|.*_shoulder_y_joint|.*_shoulder_x_joint|.*_shoulder_z_joint|.*_elbow_joint": 17.38,
+                ".*_ankle_x_joint": 20.76,
+            },
             stiffness={
                 ".*_hip_y_joint|.*_hip_x_joint|.*_knee_joint": 250.0,
                 ".*_hip_z_joint": 180.0,
