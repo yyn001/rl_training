@@ -20,9 +20,9 @@ _JERR_COEFFS = {
     "right_hip_y_joint": 0.0, "right_hip_x_joint": 1.0, "right_hip_z_joint": 0.0,
     "right_knee_joint": 0.0, "right_ankle_y_joint": 0.0, "right_ankle_x_joint": 0.0,
     "waist_z_joint": 7.5,
-    "left_shoulder_y_joint": 0.01, "left_shoulder_x_joint": 0.25,
+    "left_shoulder_y_joint": 0.01, "left_shoulder_x_joint": 2.0,
     "left_shoulder_z_joint": 0.25, "left_elbow_joint": 0.01,
-    "right_shoulder_y_joint": 0.01, "right_shoulder_x_joint": 0.25,
+    "right_shoulder_y_joint": 0.01, "right_shoulder_x_joint": 2.0,
     "right_shoulder_z_joint": 0.25, "right_elbow_joint": 0.01,
 }
 

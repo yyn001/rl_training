@@ -120,7 +120,7 @@ class AmpCommandsCfg:
         zero_cmd_threshold_z=0.15,
         pure_ang_vel_env_ratio=0.15,
         ranges=mdp.AmpVelocityCommandCfg.Ranges(
-            lin_vel_x=(-1.0, 1.4),
+            lin_vel_x=(-0.75, 1.2),
             lin_vel_y=(-0.5, 0.5),
             ang_vel_z=(-1.2, 1.2),
             heading=(-3.14, 3.14),
@@ -417,12 +417,12 @@ class AmpRewardsCfg:
     # ── Regularization rewards ───────────────────────────────────
     dof_vel_l2 = RewTerm(
         func=mdp.dof_vel_l2,
-        weight=-2e-4,
+        weight=-1e-4,
         params={"asset_cfg": SceneEntityCfg("robot")},
     )
     dof_torque_l2 = RewTerm(
         func=mdp.dof_torque_l2,
-        weight=-5e-6,
+        weight=-4e-6,
         params={
             "asset_cfg": SceneEntityCfg("robot"),
         },
@@ -439,7 +439,7 @@ class AmpRewardsCfg:
             "asset_cfg": SceneEntityCfg("robot"),
         },
     )
-    action_rate_l2 = RewTerm(func=mdp.action_rate_l2, weight=-0.025)
+    action_rate_l2 = RewTerm(func=mdp.action_rate_l2, weight=-0.02)
     smoothness_l2 = RewTerm(func=mdp.smoothness_l2, weight=-0.008)
 
     # ── Constraint rewards ───────────────────────────────────────
