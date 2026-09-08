@@ -630,8 +630,7 @@ class AmpCurriculumCfg:
     push_curriculum = CurrTerm(
         func=mdp.push_curriculum,
         params={
-            "reward_term_name": "lin_vel_tracking",
-            "reward_ratio": 0.93,
+            "push_start_iteration": 5000,
             "velocity_range": {"x": (-1.0, 1.0), "y": (-0.5, 0.5)},
         },
     )

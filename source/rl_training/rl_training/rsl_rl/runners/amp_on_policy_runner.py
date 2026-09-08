@@ -28,6 +28,10 @@ from ..algorithms.ppo_amp import AMPExportWrapper
 class AMPOnPolicyRunner(OnPolicyRunner):
     """On-policy runner for AMP training with custom policy export."""
 
+    def learn(self, num_learning_iterations: int, init_at_random_ep_len: bool = False) -> None:
+        self.env.unwrapped._runner_ref = self
+        super().learn(num_learning_iterations, init_at_random_ep_len)
+
     def get_inference_policy(self, device: str | None = None):
         """Return combined CE-Net + Actor for inference.
 
